@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quebra Cabeça</title>
+    <link rel="stylesheet" href="puzzle.css">
+    <link rel="shortcut icon" href="img_qc/Icon 1.png" type="image/x-icon">
+    <script src="puzzle.js" defer></script>
+    <style>
+        /* Estilização do botão de mute para ficar como o de Libras */
+        #muteButton {
+            position: fixed;
+            bottom: 50px;
+            right: 50px;
+            background-color: #0066cc;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #muteButton:hover {
+            background-color: #004080;
+        }
+
+        /* Classe para o zoom */
+        .zoomed {
+            transform: scale(1.1);
+            transform-origin: top left;
+        }
+
+        /* Classe para alto contraste */
+        .alto-contraste {
+            filter: invert(1) hue-rotate(180deg);
+            background-color: black !important;
+        }
+
+        /* Classe para escala de cinza */
+        .escala-cinza {
+            filter: grayscale(100%);
+            background-color: #ccc !important;
+        }
+
+        /* Estilo do contêiner do tabuleiro e da imagem ao lado */
+        #tabuleiro-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* Estilo para a imagem verde */
+        #imagem-verde {
+            width: 150px; /* Ajuste o tamanho conforme necessário */
+            height: auto;
+        }
+
+        /* Estilo geral */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #c9e5fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Container principal para centralizar o conteúdo */
+        .container {
+            max-width: 800px;
+            padding: 20px;
+            text-align: center;
+            color: #011232;
+        }
+
+        /* Estilização do título */
+        h1 {
+            font-weight: 700;
+            font-size: 30px;
+            color: #011232;
+            margin-top: 100px;
+        }
+
+        /* Estilização do subtítulo */
+        sub {
+            font-size: 25px;
+            font-style: italic;
+            color: #011232;
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* Estilização do parágrafo */
+        p {
+            font-size: 16px;
+            color: #002366;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    });
+</script>
+
+    <nav class="menu">
+        <div class="navegacao">
+            <a href="https://autplay.framer.website/">Sobre</a>
+            <a href="https://autplay.framer.website/Alunos">Aluno</a>
+            <a href="https://autplay.framer.website/Professor">Professor</a>
+            <a href="https://autplay.framer.website/Pais">Pais</a>
+            <a href="https://autplay.framer.website/Doa%C3%A7%C3%A3o">Doação</a>
+        </div>
+        <div class="logo">
+            <img src="img_qc/Logo sem slogan.png" alt="Logo do Projeto" />
+        </div>
+        <div class="acessibilidade">
+            <button id="zoom">🔍 Zoom</button>
+            <button id="alto-contraste">🔳 Alto Contraste</button>
+            <button id="escala-cinza">⚫ Escala de Cinza</button>
+        </div>
+    </nav>
+
+    <!-- Widget VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    <!-- Conteúdo centralizado -->
+    <div class="container">
+        <h1>Quebra-Cabeça do Alfabeto</h1>
+        <sub>Vamos brincar?</sub>
+        <p>Neste jogo, você vai aprender a colocar as letras na ordem certa do alfabeto!</p>
+        <p>Enquanto monta o quebra-cabeça, um monstrinho divertido aparece atrás das peças para te mostrar que está no caminho certo.</p>
+        <p>Jogue e descubra quais monstrinhos legais vão aparecer enquanto você aprende as letras!</p>
+    </div>
+
+    <!-- Contêiner para o tabuleiro e a imagem ao lado -->
+    <div id="tabuleiro-container">
+        <div id="board"></div>
+        <img id="imagem-verde" src="img_qc/verde.png" alt="Imagem verde">
+    </div>
+
+    <h2>Tentativas: <span id="turns">00</span></h2>
+    <div id="pieces"></div>
+
+    <!-- Adicionando o player de música -->
+    <audio id="musicaDeFundo" loop>
+        <source src="img_qc/a-party-at-a-resort-177664.mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <!-- Botão de Mute personalizado -->
+    <button id="muteButton">🔊</button>
+
+    <!-- Scripts de Mute, Zoom, Alto Contraste e Escala de Cinza -->
+    <script>
+        const musica = document.getElementById("musicaDeFundo");
+        const muteButton = document.getElementById("muteButton");
+
+        muteButton.addEventListener("click", function() {
+            musica.muted = !musica.muted;
+            muteButton.textContent = musica.muted ? "🔇" : "🔊";
+        });
+
+        document.body.addEventListener('click', () => {
+            musica.play().catch(() => {
+                console.log("Autoplay bloqueado. Clique em qualquer lugar para começar o áudio.");
+            });
+        });
+
+        document.getElementById("zoom").addEventListener("click", function() {
+            document.body.classList.toggle("zoomed");
+        });
+
+        document.getElementById("alto-contraste").addEventListener("click", function() {
+            document.body.classList.toggle("alto-contraste");
+        });
+
+        document.getElementById("escala-cinza").addEventListener("click", function() {
+            document.body.classList.toggle("escala-cinza");
+        });
+    </script>
+    
+    <!-- Modais -->
+    <div id="parabensModal" style="display: none;">
+        <h2>Parabéns!</h2>
+        <p>Você concluiu a sua missão! 😎</p>
+        <button onclick="closeParabensModal()">FECHAR</button>
+        <button onclick="shufflePuzzle()">TENTAR NOVAMENTE</button>
+    </div>
+
+    <div id="falhaModal" style="display: none;">
+        <h2>Não foi dessa vez... 😔</h2>
+        <p>Tente de novo!</p>
+        <button onclick="closeFalhaModal()">FECHAR</button>
+        <button onclick="shufflePuzzle()">TENTAR NOVAMENTE</button>
+    </div>
+
+    <button id="verificar">Verificar Quebra-Cabeça</button>
+</body>
+</html>
